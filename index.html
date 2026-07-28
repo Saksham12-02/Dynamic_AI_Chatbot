@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f4f4f4;
+            margin:0;
+            padding:20px;
+        }
+
+        #chat-box{
+            width:80%;
+            max-width:700px;
+            height:450px;
+            margin:auto;
+            background:white;
+            border:1px solid #ccc;
+            padding:15px;
+            overflow-y:auto;
+        }
+
+        #controls{
+            width:80%;
+            max-width:700px;
+            margin:15px auto;
+            display:flex;
+        }
+
+        #user-input{
+            flex:1;
+            padding:10px;
+            font-size:16px;
+        }
+
+        button{
+            padding:10px 20px;
+            font-size:16px;
+            margin-left:10px;
+            cursor:pointer;
+        }
+
+        .user{
+            color:blue;
+            margin:8px 0;
+        }
+
+        .bot{
+            color:green;
+            margin:8px 0;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h2 align="center">AI Chatbot</h2>
+
+<div id="chat-box"></div>
+
+<div id="controls">
+    <input
+        type="text"
+        id="user-input"
+        placeholder="Type your message..."
+        onkeydown="if(event.key==='Enter') sendMessage()">
+
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+
+async function sendMessage(){
+
+    const input=document.getElementById("user-input");
+    const chat=document.getElementById("chat-box");
+
+    const message=input.value.trim();
+
+    if(message==="") return;
+
+    chat.innerHTML += `<div class="user"><b>You:</b> ${message}</div>`;
+
+    input.value="";
+
+    const response = await fetch("/chat",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            message:message
+        })
+    });
+
+    const data = await response.json();
+
+    chat.innerHTML += `<div class="bot"><b>Bot:</b> ${data.reply}</div>`;
+
+    chat.scrollTop = chat.scrollHeight;
+}
+
+</script>
+
+</body>
+</html>
